@@ -1,0 +1,6 @@
+framework module SMCategory {
+  umbrella header "SMCategory-umbrella.h"
+
+  export *
+  module * { export * }
+}

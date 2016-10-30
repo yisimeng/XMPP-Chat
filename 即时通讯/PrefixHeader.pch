@@ -1,0 +1,43 @@
+//
+//  PrefixHeader.pch
+//  即时通讯
+//
+//  Created by 忆思梦 on 2016/10/29.
+//  Copyright © 2016年 忆思梦. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#define IsLogin @"login"
+
+#endif /* PrefixHeader_pch */
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <SMCategory/UIView+category.h>
+#import <XMPPFramework/XMPPFramework.h>
+#import <XMPPFramework/XMPP.h>
+#import <XMPPFramework/XMPPRoster.h>
+#import <XMPPFramework/XMPPMessageArchiving.h>
+#import <XMPPFramework/XMPPRosterCoreDataStorage.h>
+#import <XMPPFramework/XMPPMessageArchivingCoreDataStorage.h>
+#import "YSMXMPPManager.h"
+
+#endif
+
+//xmpp
+
+#ifndef XMPPSample_XMPPConfig_h
+#define XMPPSample_XMPPConfig_h
+
+//openfire服务器IP地址
+#define  kHostName      @"localhost"
+//openfire服务器端口 默认5222
+#define  kHostPort      5222
+//openfire域名
+#define kDomin @"yisimengdemacbook-pro.local"
+//resource
+#define kResource @"iOS"
+#endif
