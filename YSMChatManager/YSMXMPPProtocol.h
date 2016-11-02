@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-//登录注册
+#pragma mark 登录注册
 @protocol YSMXMPPLoginDelegate <NSObject>
 @optional
 //登录&注册回调
@@ -16,7 +16,8 @@
 - (void)registerCallBack:(BOOL)success withError:(DDXMLElement *)error;
 @end
 
-//好友
+
+#pragma mark 好友
 @protocol YSMXMPPRosterDelegate <NSObject>
 /**
  好友加载完成
@@ -32,4 +33,21 @@
  @return 是否同意
  */
 - (BOOL)shouldAcceptPresenceSubscription:(XMPPPresence *)presence;
+@end
+
+
+#pragma mark 消息
+@protocol YSMXMPPMessageDelegate <NSObject>
+@optional
+/**
+ 收到消息
+ */
+- (void)didReceiveMessage;
+/**
+ 消息已发送
+ */
+- (void)messageDidSend;
+
+- (void)finishedLoadMessage;
+
 @end

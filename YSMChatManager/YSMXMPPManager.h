@@ -25,16 +25,8 @@
  通信管道
  */
 @property (nonatomic, strong) XMPPStream *xmppStream;
-/**
- 上下文
- */
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-/**
- 归档message
- */
-@property (nonatomic, strong) XMPPMessageArchiving *messageArchving;
 
-
+#pragma mark - 登录注册
 /**
  用户登录
 
@@ -55,9 +47,7 @@
 - (void)logout;
 
 
-/**
- 好友
- */
+#pragma mark - 好友
 @property (nonatomic, strong) XMPPRoster *xmppRoster;
 /**
  好友代理
@@ -67,6 +57,10 @@
  好友列表
  */
 @property (nonatomic, readonly) NSMutableArray *rosterJids;
+/**
+ 激活好友模块
+ */
+- (void)activateRoster;
 /**
  添加好友
 
@@ -80,12 +74,31 @@
  */
 - (void)unSubscribePresenceAccount:(NSString *)account;
 
+#pragma mark - 消息
 
-
+@property (nonatomic, assign) id<YSMXMPPMessageDelegate> messageDelegate;
 /**
- 电子名片
+ 消息上下文
  */
+@property (nonatomic, strong) NSManagedObjectContext *messageContext;
+/**
+ 归档message
+ */
+@property (nonatomic, strong) XMPPMessageArchiving *messageArchving;
+/**
+ 消息列表
+ */
+@property (nonatomic, readonly) NSMutableArray *messageArray;
+/**
+ 激活message模块
+ */
+- (void)activateMessage;
+
+-(void)reloadMessageWithChaterJid:(XMPPJID *)chaterJid;
+
+#pragma mark - 电子名片
 @property (nonatomic, strong) XMPPvCardCoreDataStorage *vCardStorage;
 @property (nonatomic, strong) XMPPvCardTempModule *vCard;
 @property (nonatomic, strong) XMPPvCardAvatarModule *avatar;
+
 @end

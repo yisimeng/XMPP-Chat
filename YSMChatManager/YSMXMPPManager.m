@@ -8,20 +8,23 @@
 
 #import "YSMXMPPManager.h"
 
-typedef NS_ENUM(NSInteger,ConnectToServerPopure){
-    ConnectToServerPopureLogin, //登录
-    ConnectToServerPopureReg    //注册
+typedef NS_ENUM(NSInteger,ConnectToServerType){
+    ConnectToServerLogin, //登录
+    ConnectToServerReg    //注册
 };
 
-@interface YSMXMPPManager ()<XMPPStreamDelegate,XMPPRosterDelegate>
+@interface YSMXMPPManager ()<XMPPStreamDelegate,XMPPRosterDelegate,NSFetchedResultsControllerDelegate>
 @property (nonatomic, strong) NSString *account;
 @property (nonatomic, strong) NSString *password;
-@property (nonatomic, assign) ConnectToServerPopure connectToServerPopuer;
-
+@property (nonatomic, assign) ConnectToServerType connectToServerType;
 /**
  好友列表
  */
 @property (nonatomic, strong) NSMutableArray *rosterJids;
+
+@property (nonatomic, strong) NSMutableArray *messageArray;
+
+@property (nonatomic, strong) NSFetchedResultsController * fetchController;
 @end
 
 @implementation YSMXMPPManager
@@ -36,48 +39,29 @@ typedef NS_ENUM(NSInteger,ConnectToServerPopure){
 }
 - (instancetype)init{
     if (self = [super init]) {
-        self.xmppStream = [[XMPPStream alloc] init];
-        //设置ip、端口、心跳时间、允许后台运行
-        self.xmppStream.hostName = kHostName;
-        self.xmppStream.hostPort = kHostPort;
-        self.xmppStream.keepAliveInterval = 30;
-        self.xmppStream.enableBackgroundingOnSocket = YES;
-        //设置代理，接收回调
-        [self.xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
-        
-        //好友管理
-        self.rosterJids = [NSMutableArray arrayWithCapacity:1];
-        //获得一个存储好友的CoreData仓库，用来数据持久化
-        XMPPRosterCoreDataStorage * rosterCoreDataStorage = [XMPPRosterCoreDataStorage sharedInstance];
-        //初始化xmppRoster
-        self.xmppRoster = [[XMPPRoster alloc] initWithRosterStorage:rosterCoreDataStorage dispatchQueue:dispatch_get_main_queue()];
-        self.xmppRoster.autoFetchRoster = YES;
-        //激活好友
-        [self.xmppRoster activate:self.xmppStream];
-        //设置代理
-        [self.xmppRoster addDelegate:self delegateQueue:dispatch_get_main_queue()];
-        
-        //消息
-        //初始化消息仓库
-        XMPPMessageArchivingCoreDataStorage * messageStroage = [XMPPMessageArchivingCoreDataStorage sharedInstance];
-        //初始化消息归档对象
-        self.messageArchving = [[XMPPMessageArchiving alloc] initWithMessageArchivingStorage:messageStroage dispatchQueue:dispatch_get_main_queue()];
-        //设置上下文
-        self.managedObjectContext = messageStroage.mainThreadManagedObjectContext;
-        //激活消息模块
-        [self.messageArchving activate:self.xmppStream];
     }
     return self;
 }
 
+- (XMPPStream *)xmppStream{
+    if (_xmppStream == nil) {
+        _xmppStream = [[XMPPStream alloc] init];
+        //设置ip、端口、心跳时间、允许后台运行
+        _xmppStream.hostName = kHostName;
+        _xmppStream.hostPort = kHostPort;
+        _xmppStream.keepAliveInterval = 30;
+        _xmppStream.enableBackgroundingOnSocket = YES;
+        //设置代理，接收回调
+        [_xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
+    }
+    return _xmppStream;
+}
+
 //设置用户jid
-- (void)connectWithAccount:(NSString *)account connectPopuer:(ConnectToServerPopure)popuer{
-    _connectToServerPopuer = popuer;
+- (void)configConnectServerStreamJid{
     //用户，域名，resource：设备
-    XMPPJID * jid = [XMPPJID jidWithUser:account domain:kDomin resource:kResource];
+    XMPPJID * jid = [XMPPJID jidWithUser:self.account domain:kDomin resource:kResource];
     self.xmppStream.myJID = jid;
-    
-    [self connectToServer];
 }
 
 //连接服务器
@@ -100,18 +84,18 @@ typedef NS_ENUM(NSInteger,ConnectToServerPopure){
     [self.xmppStream disconnect];
 }
 
-#pragma mark -- XMPPStreamDelegate 连接回调
+#pragma mark - 连接服务器回调
 //连接服务器成功
 - (void)xmppStreamDidConnect:(XMPPStream *)sender{
     NSError *error = nil;
-    switch (_connectToServerPopuer) {
-        case ConnectToServerPopureLogin:
+    switch (_connectToServerType) {
+        case ConnectToServerLogin:
             //验证密码登录
             if (![sender authenticateWithPassword:_password error:&error]) {
                 NSLog(@"登录失败：%@",error);
             }
             break;
-        case ConnectToServerPopureReg:
+        case ConnectToServerReg:
             //注册账号密码
             if (![sender registerWithPassword:_password error:&error]) {
                 NSLog(@"注册失败：%@",error);
@@ -125,6 +109,33 @@ typedef NS_ENUM(NSInteger,ConnectToServerPopure){
 - (void)xmppStreamDidDisconnect:(XMPPStream *)sender withError:(NSError *)error{
     NSLog(@"断开连接：%@",error);
 }
+//连接超时
+- (void)xmppStreamConnectDidTimeout:(XMPPStream *)sender{
+    
+}
+
+#pragma mark - 登录注册
+- (void)loginWithAccount:(NSString *)account password:(NSString *)password{
+    self.account = account;
+    self.password = password;
+    self.connectToServerType = ConnectToServerLogin;
+    [self configConnectServerStreamJid];
+    [self connectToServer];
+}
+
+- (void)regisgerWithAccount:(NSString *)account password:(NSString *)password{
+    self.account = account;
+    self.password = password;
+    self.connectToServerType = ConnectToServerReg;
+    [self configConnectServerStreamJid];
+    [self connectToServer];
+}
+- (void)logout{
+    [self disconnectWithServer];
+    self.password = @"";
+    self.account = @"";
+}
+
 //登录成功
 - (void)xmppStreamDidAuthenticate:(XMPPStream *)sender{
     //改变登录状态
@@ -153,9 +164,44 @@ typedef NS_ENUM(NSInteger,ConnectToServerPopure){
     }
 }
 
-
 #pragma mark - 好友
-#pragma mark -- XMPPRosterDelegate 好友请求回调
+
+- (void)activateRoster{
+    //激活好友
+    [self.xmppRoster activate:self.xmppStream];
+}
+- (XMPPRoster *)xmppRoster{
+    if (_xmppRoster == nil) {
+        //好友管理
+        self.rosterJids = [NSMutableArray arrayWithCapacity:1];
+        //获得一个存储好友的CoreData仓库，用来数据持久化
+        XMPPRosterCoreDataStorage * rosterCoreDataStorage = [XMPPRosterCoreDataStorage sharedInstance];
+        //初始化xmppRoster
+        _xmppRoster = [[XMPPRoster alloc] initWithRosterStorage:rosterCoreDataStorage dispatchQueue:dispatch_get_main_queue()];
+        _xmppRoster.autoFetchRoster = YES;
+        //设置代理
+        [_xmppRoster addDelegate:self delegateQueue:dispatch_get_main_queue()];
+    }
+    return _xmppRoster;
+}
+
+#pragma mark 好友管理
+//留有疑问：subscribePresenceToUser  和add  的区别。一个是好友，一个是联系人？
+- (void)subscribePresenceAccount:(NSString *)account{
+    XMPPJID * jid = [XMPPJID jidWithUser:account domain:kDomin resource:kResource];
+    [self.xmppRoster subscribePresenceToUser:jid];
+}
+- (void)unSubscribePresenceAccount:(NSString *)account{
+    //需要先判断是否已经是好友
+    XMPPJID * jid = [XMPPJID jidWithString:account];
+    [self.xmppRoster removeUser:jid];
+}
+//好友关系的推送
+- (void)xmppRoster:(XMPPRoster *)sender didReceiveRosterPush:(XMPPIQ *)iq{
+    NSLog(@"roster 接受到push：%@",iq);
+}
+
+#pragma mark XMPPRosterDelegate 好友请求回调
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence{
     if (self.rosterDelegate && [self.rosterDelegate respondsToSelector:@selector(shouldAcceptPresenceSubscription:)]) {
         if ([self.rosterDelegate shouldAcceptPresenceSubscription:presence]) {
@@ -194,40 +240,89 @@ typedef NS_ENUM(NSInteger,ConnectToServerPopure){
     }
 }
 
-#pragma mark - public method
-#pragma mark 登录注册
-- (void)loginWithAccount:(NSString *)account password:(NSString *)password{
-    self.account = account;
-    self.password = password;
-    //登录
-    [self connectWithAccount:account connectPopuer:ConnectToServerPopureLogin];
+
+
+#pragma mark
+- (void)activateMessage{
+    //激活消息模块
+    [self.messageArchving activate:self.xmppStream];
+}
+- (XMPPMessageArchiving *)messageArchving{
+    if (_messageArchving == nil) {
+        //消息
+        self.messageArray = [NSMutableArray arrayWithCapacity:1];
+        //初始化消息仓库
+        XMPPMessageArchivingCoreDataStorage * messageStroage = [XMPPMessageArchivingCoreDataStorage sharedInstance];
+        //初始化消息归档对象
+        _messageArchving = [[XMPPMessageArchiving alloc] initWithMessageArchivingStorage:messageStroage dispatchQueue:dispatch_get_main_queue()];
+        //设置上下文
+        self.messageContext = messageStroage.mainThreadManagedObjectContext;
+    }
+    return _messageArchving;
+}
+//接收到消息
+- (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
+    NSLog(@"收到了一条消息：%@",message);
+    if (self.messageDelegate && [self.messageDelegate respondsToSelector:@selector(didReceiveMessage)]) {
+        [self.messageDelegate didReceiveMessage];
+    }
+}
+//已发送消息
+- (void)xmppStream:(XMPPStream *)sender didSendMessage:(XMPPMessage *)message{
+    NSLog(@"已成功发送消息：%@",message);
+    if (self.messageDelegate && [self.messageDelegate respondsToSelector:@selector(messageDidSend)]) {
+        [self.messageDelegate messageDidSend];
+    }
+}
+#pragma mark 刷新消息的方法
+-(void)reloadMessageWithChaterJid:(XMPPJID *)chaterJid{
+    //得到上下文
+    //创建搜索请求
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
+    //从上下文中获取归档消息的实体描述  EXP-0136:XMPPMessageArchiving_Message_CoreDataObject  实体名称
+    NSEntityDescription * entity = [NSEntityDescription entityForName:@"XMPPMessageArchiving_Message_CoreDataObject" inManagedObjectContext:self.messageContext];
+    [fetchRequest setEntity:entity];
+    // Specify criteria for filtering which objects to fetch
+    //创建谓词，设置过滤条件
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"streamBareJidStr = %@ AND bareJidStr = %@", self.xmppStream.myJID.bare,chaterJid.bare];
+    [fetchRequest setPredicate:predicate];
+    // Specify how the fetched objects should be sorted
+    //指定排序方式
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"timestamp"
+                                                                   ascending:YES];
+    //给索引设置排序方式
+    [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
+    
+    _fetchController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.messageContext sectionNameKeyPath:nil cacheName:nil];
+    
+    NSError *error = nil;
+    _fetchController.delegate = self;
+    [_fetchController performFetch:&error];
+    if (error) {
+        NSLog(@"搜索消息失败：%@",error);
+    }
+//    NSArray *fetchedObjects = [self.messageContext executeFetchRequest:fetchRequest error:&error];
+//    if (fetchedObjects == nil) {
+//        
+//    }
+    NSLog(@"搜索消息结果：%@",_fetchController.fetchedObjects);
+    if (self.messageArray.count != 0) {
+        [self.messageArray removeAllObjects];
+    }
+    self.messageArray = [NSMutableArray arrayWithArray:_fetchController.fetchedObjects];
+    
+    if (self.messageDelegate && [self.messageDelegate respondsToSelector:@selector(finishedLoadMessage)]) {
+        [self.messageDelegate finishedLoadMessage];
+    }
+}
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(nullable NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(nullable NSIndexPath *)newIndexPath{
+    if (type == NSFetchedResultsChangeInsert) {
+        [self.messageArray addObject:anObject];
+        if (self.messageDelegate && [self.messageDelegate respondsToSelector:@selector(finishedLoadMessage)]) {
+            [self.messageDelegate finishedLoadMessage];
+        }
+    }
 }
 
-- (void)regisgerWithAccount:(NSString *)account password:(NSString *)password{
-    self.account = account;
-    self.password = password;
-    //注册
-    [self connectWithAccount:account connectPopuer:ConnectToServerPopureReg];
-}
-- (void)logout{
-    [self disconnectWithServer];
-    self.password = @"";
-    self.account = @"";
-}
-#pragma mark 好友管理
-//留有疑问：subscribePresenceToUser  和add  的区别。一个是好友，一个是联系人？
-- (void)subscribePresenceAccount:(NSString *)account{
-    XMPPJID * jid = [XMPPJID jidWithUser:account domain:kDomin resource:kResource];
-    [self.xmppRoster subscribePresenceToUser:jid];
-}
-- (void)unSubscribePresenceAccount:(NSString *)account{
-    //需要先判断是否已经是好友
-    XMPPJID * jid = [XMPPJID jidWithString:account];
-    [self.xmppRoster removeUser:jid];
-}
-//好友关系的推送
-- (void)xmppRoster:(XMPPRoster *)sender didReceiveRosterPush:(XMPPIQ *)iq{
-    NSLog(@"roster 接受到push：%@",iq);
-}
 
 @end

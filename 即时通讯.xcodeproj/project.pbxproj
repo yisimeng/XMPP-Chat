@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE077BA81DC7964D00D6F5D5 /* ChatroomTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE077BA71DC7964D00D6F5D5 /* ChatroomTableViewController.m */; };
 		EE07C5E91DC4B1B500A93384 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EE07C5E81DC4B1B500A93384 /* main.m */; };
 		EE07C5EC1DC4B1B500A93384 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EE07C5EB1DC4B1B500A93384 /* AppDelegate.m */; };
 		EE07C5EF1DC4B1B500A93384 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE07C5EE1DC4B1B500A93384 /* ViewController.m */; };
@@ -43,6 +44,8 @@
 		0B88A92892865F017FAFA304 /* Pods-即时通讯.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-即时通讯.release.xcconfig"; path = "Pods/Target Support Files/Pods-即时通讯/Pods-即时通讯.release.xcconfig"; sourceTree = "<group>"; };
 		5C88E8FB715F311DC0D506DA /* Pods-即时通讯.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-即时通讯.debug.xcconfig"; path = "Pods/Target Support Files/Pods-即时通讯/Pods-即时通讯.debug.xcconfig"; sourceTree = "<group>"; };
 		9808D03179518DE806FBD8CF /* Pods_____.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Pods_____.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE077BA61DC7964D00D6F5D5 /* ChatroomTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatroomTableViewController.h; sourceTree = "<group>"; };
+		EE077BA71DC7964D00D6F5D5 /* ChatroomTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatroomTableViewController.m; sourceTree = "<group>"; };
 		EE07C5E41DC4B1B500A93384 /* 即时通讯.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "即时通讯.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE07C5E81DC4B1B500A93384 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		EE07C5EA1DC4B1B500A93384 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -148,6 +151,8 @@
 				EE07C61C1DC4C3CA00A93384 /* LoginViewController.xib */,
 				EE07C62C1DC6318400A93384 /* RosterTableViewController.h */,
 				EE07C62D1DC6318400A93384 /* RosterTableViewController.m */,
+				EE077BA61DC7964D00D6F5D5 /* ChatroomTableViewController.h */,
+				EE077BA71DC7964D00D6F5D5 /* ChatroomTableViewController.m */,
 				EE07C5F01DC4B1B500A93384 /* Main.storyboard */,
 				EE07C5F31DC4B1B500A93384 /* Assets.xcassets */,
 				EE07C5F51DC4B1B500A93384 /* LaunchScreen.storyboard */,
@@ -381,6 +386,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE077BA81DC7964D00D6F5D5 /* ChatroomTableViewController.m in Sources */,
 				EE07C61D1DC4C3CA00A93384 /* LoginViewController.m in Sources */,
 				EE07C5EF1DC4B1B500A93384 /* ViewController.m in Sources */,
 				EE07C62E1DC6318400A93384 /* RosterTableViewController.m in Sources */,
