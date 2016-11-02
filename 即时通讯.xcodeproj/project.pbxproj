@@ -20,6 +20,7 @@
 		EE07C61E1DC4C3CA00A93384 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = EE07C61C1DC4C3CA00A93384 /* LoginViewController.xib */; };
 		EE07C6231DC4FBDC00A93384 /* YSMXMPPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE07C6221DC4FBDC00A93384 /* YSMXMPPManager.m */; };
 		EE07C62E1DC6318400A93384 /* RosterTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE07C62D1DC6318400A93384 /* RosterTableViewController.m */; };
+		EE96976B1DC9F63B0001A07D /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = EE96976A1DC9F63B0001A07D /* README.md */; };
 		FFB6E435306746229CC322F3 /* Pods_____.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9808D03179518DE806FBD8CF /* Pods_____.framework */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 		EE07C62C1DC6318400A93384 /* RosterTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RosterTableViewController.h; sourceTree = "<group>"; };
 		EE07C62D1DC6318400A93384 /* RosterTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RosterTableViewController.m; sourceTree = "<group>"; };
 		EE07C6301DC6467100A93384 /* YSMXMPPProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YSMXMPPProtocol.h; sourceTree = "<group>"; };
+		EE96976A1DC9F63B0001A07D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 		EE07C5DB1DC4B1B500A93384 = {
 			isa = PBXGroup;
 			children = (
+				EE96976A1DC9F63B0001A07D /* README.md */,
 				EE07C6201DC4FBC200A93384 /* YSMXMPPManager */,
 				EE07C5E61DC4B1B500A93384 /* 即时通讯 */,
 				EE07C6001DC4B1B500A93384 /* 即时通讯Tests */,
@@ -392,6 +395,7 @@
 				EE07C62E1DC6318400A93384 /* RosterTableViewController.m in Sources */,
 				EE07C6231DC4FBDC00A93384 /* YSMXMPPManager.m in Sources */,
 				EE07C5EC1DC4B1B500A93384 /* AppDelegate.m in Sources */,
+				EE96976B1DC9F63B0001A07D /* README.md in Sources */,
 				EE07C5E91DC4B1B500A93384 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
