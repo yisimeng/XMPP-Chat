@@ -37,7 +37,7 @@
 
 
 #pragma mark 消息
-@protocol YSMXMPPMessageDelegate <NSObject>
+@protocol YSMXMPPContactsDelegate <NSObject>
 @optional
 /**
  收到消息

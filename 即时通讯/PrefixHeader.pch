@@ -32,11 +32,11 @@
 #ifndef XMPPSample_XMPPConfig_h
 #define XMPPSample_XMPPConfig_h
 
-//openfire服务器IP地址
+//服务器IP地址
 #define  kHostName      @"localhost"
-//openfire服务器端口 默认5222
+//服务器端口 默认5222
 #define  kHostPort      5222
-//openfire域名
+//域名
 #define kDomin @"yisimengdemacbook-pro.local"
 //resource
 #define kResource @"iOS"

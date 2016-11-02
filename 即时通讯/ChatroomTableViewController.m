@@ -7,10 +7,12 @@
 //
 
 #import "ChatroomTableViewController.h"
-
-@interface ChatroomTableViewController ()<YSMXMPPMessageDelegate>
+#import "YSMContactsManager.h"
+@interface ChatroomTableViewController ()<YSMXMPPContactsDelegate>
 
 @property (nonatomic, strong) NSMutableArray *messages;
+
+@property (nonatomic, strong) YSMContactsManager *contactsManager;
 
 @end
 
@@ -22,9 +24,9 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtomItemAction:)];
     self.tableView.tableFooterView = [[UITableViewHeaderFooterView alloc] init];
     
-    [YSMXMPPManager shareManager].messageDelegate = self;
-    [[YSMXMPPManager shareManager] activateMessage];
-    [[YSMXMPPManager shareManager] reloadMessageWithChaterJid:self.chaterJid];
+    self.contactsManager = [YSMContactsManager contactsManagerWithContactsJid:self.chaterJid];
+    self.contactsManager.contactsDelegate = self;
+    [self.contactsManager activateMessage];
 }
 
 - (void)rightBarButtomItemAction:(UIBarButtonItem *)sender{
@@ -34,27 +36,25 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [YSMXMPPManager shareManager].messageArray.count;
+    return self.contactsManager.messageArray.count;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"chatroomCellId" forIndexPath:indexPath];
-    XMPPMessageArchiving_Message_CoreDataObject * message = [[YSMXMPPManager shareManager].messageArray objectAtIndex:indexPath.row];
+    XMPPMessageArchiving_Message_CoreDataObject * message = [self.contactsManager.messageArray objectAtIndex:indexPath.row];
+    cell.textLabel.text = @"";
+    cell.detailTextLabel.text = @"";
     if (message.isOutgoing) {
         cell.detailTextLabel.text = message.body;
     }else{
         cell.textLabel.text = message.body;
     }
+    
+    
     return cell;
 }
 
-- (void)didReceiveMessage{
-    [[YSMXMPPManager shareManager] reloadMessageWithChaterJid:self.chaterJid];
-}
-- (void)messageDidSend{
-    [[YSMXMPPManager shareManager] reloadMessageWithChaterJid:self.chaterJid];
-}
 - (void)finishedLoadMessage{
     NSLog(@"聊天页  消息加载完成");
     [self.tableView reloadData];

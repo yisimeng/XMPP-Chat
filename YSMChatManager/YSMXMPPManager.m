@@ -17,14 +17,14 @@ typedef NS_ENUM(NSInteger,ConnectToServerType){
 @property (nonatomic, strong) NSString *account;
 @property (nonatomic, strong) NSString *password;
 @property (nonatomic, assign) ConnectToServerType connectToServerType;
+
+@property (nonatomic, strong) XMPPJID *myJid;
+
 /**
  好友列表
  */
 @property (nonatomic, strong) NSMutableArray *rosterJids;
 
-@property (nonatomic, strong) NSMutableArray *messageArray;
-
-@property (nonatomic, strong) NSFetchedResultsController * fetchController;
 @end
 
 @implementation YSMXMPPManager
@@ -61,6 +61,7 @@ typedef NS_ENUM(NSInteger,ConnectToServerType){
 - (void)configConnectServerStreamJid{
     //用户，域名，resource：设备
     XMPPJID * jid = [XMPPJID jidWithUser:self.account domain:kDomin resource:kResource];
+    self.myJid = jid;
     self.xmppStream.myJID = jid;
 }
 
@@ -245,83 +246,7 @@ typedef NS_ENUM(NSInteger,ConnectToServerType){
 #pragma mark
 - (void)activateMessage{
     //激活消息模块
-    [self.messageArchving activate:self.xmppStream];
-}
-- (XMPPMessageArchiving *)messageArchving{
-    if (_messageArchving == nil) {
-        //消息
-        self.messageArray = [NSMutableArray arrayWithCapacity:1];
-        //初始化消息仓库
-        XMPPMessageArchivingCoreDataStorage * messageStroage = [XMPPMessageArchivingCoreDataStorage sharedInstance];
-        //初始化消息归档对象
-        _messageArchving = [[XMPPMessageArchiving alloc] initWithMessageArchivingStorage:messageStroage dispatchQueue:dispatch_get_main_queue()];
-        //设置上下文
-        self.messageContext = messageStroage.mainThreadManagedObjectContext;
-    }
-    return _messageArchving;
-}
-//接收到消息
-- (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
-    NSLog(@"收到了一条消息：%@",message);
-    if (self.messageDelegate && [self.messageDelegate respondsToSelector:@selector(didReceiveMessage)]) {
-        [self.messageDelegate didReceiveMessage];
-    }
-}
-//已发送消息
-- (void)xmppStream:(XMPPStream *)sender didSendMessage:(XMPPMessage *)message{
-    NSLog(@"已成功发送消息：%@",message);
-    if (self.messageDelegate && [self.messageDelegate respondsToSelector:@selector(messageDidSend)]) {
-        [self.messageDelegate messageDidSend];
-    }
-}
-#pragma mark 刷新消息的方法
--(void)reloadMessageWithChaterJid:(XMPPJID *)chaterJid{
-    //得到上下文
-    //创建搜索请求
-    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
-    //从上下文中获取归档消息的实体描述  EXP-0136:XMPPMessageArchiving_Message_CoreDataObject  实体名称
-    NSEntityDescription * entity = [NSEntityDescription entityForName:@"XMPPMessageArchiving_Message_CoreDataObject" inManagedObjectContext:self.messageContext];
-    [fetchRequest setEntity:entity];
-    // Specify criteria for filtering which objects to fetch
-    //创建谓词，设置过滤条件
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"streamBareJidStr = %@ AND bareJidStr = %@", self.xmppStream.myJID.bare,chaterJid.bare];
-    [fetchRequest setPredicate:predicate];
-    // Specify how the fetched objects should be sorted
-    //指定排序方式
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"timestamp"
-                                                                   ascending:YES];
-    //给索引设置排序方式
-    [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
-    
-    _fetchController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.messageContext sectionNameKeyPath:nil cacheName:nil];
-    
-    NSError *error = nil;
-    _fetchController.delegate = self;
-    [_fetchController performFetch:&error];
-    if (error) {
-        NSLog(@"搜索消息失败：%@",error);
-    }
-//    NSArray *fetchedObjects = [self.messageContext executeFetchRequest:fetchRequest error:&error];
-//    if (fetchedObjects == nil) {
-//        
-//    }
-    NSLog(@"搜索消息结果：%@",_fetchController.fetchedObjects);
-    if (self.messageArray.count != 0) {
-        [self.messageArray removeAllObjects];
-    }
-    self.messageArray = [NSMutableArray arrayWithArray:_fetchController.fetchedObjects];
-    
-    if (self.messageDelegate && [self.messageDelegate respondsToSelector:@selector(finishedLoadMessage)]) {
-        [self.messageDelegate finishedLoadMessage];
-    }
-}
-- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(nullable NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(nullable NSIndexPath *)newIndexPath{
-    if (type == NSFetchedResultsChangeInsert) {
-        [self.messageArray addObject:anObject];
-        if (self.messageDelegate && [self.messageDelegate respondsToSelector:@selector(finishedLoadMessage)]) {
-            [self.messageDelegate finishedLoadMessage];
-        }
-    }
+//    [self.messageArchving activate:self.xmppStream];
 }
 
 

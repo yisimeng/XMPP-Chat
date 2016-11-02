@@ -21,6 +21,8 @@
 		EE07C6231DC4FBDC00A93384 /* YSMXMPPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE07C6221DC4FBDC00A93384 /* YSMXMPPManager.m */; };
 		EE07C62E1DC6318400A93384 /* RosterTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE07C62D1DC6318400A93384 /* RosterTableViewController.m */; };
 		EE96976B1DC9F63B0001A07D /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = EE96976A1DC9F63B0001A07D /* README.md */; };
+		EE9697711DCA3ADD0001A07D /* YSMRosterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9697701DCA3ADD0001A07D /* YSMRosterManager.m */; };
+		EE9697741DCA3B020001A07D /* YSMContactsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9697731DCA3B020001A07D /* YSMContactsManager.m */; };
 		FFB6E435306746229CC322F3 /* Pods_____.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9808D03179518DE806FBD8CF /* Pods_____.framework */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +75,10 @@
 		EE07C62D1DC6318400A93384 /* RosterTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RosterTableViewController.m; sourceTree = "<group>"; };
 		EE07C6301DC6467100A93384 /* YSMXMPPProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YSMXMPPProtocol.h; sourceTree = "<group>"; };
 		EE96976A1DC9F63B0001A07D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		EE96976F1DCA3ADD0001A07D /* YSMRosterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YSMRosterManager.h; sourceTree = "<group>"; };
+		EE9697701DCA3ADD0001A07D /* YSMRosterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YSMRosterManager.m; sourceTree = "<group>"; };
+		EE9697721DCA3B020001A07D /* YSMContactsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YSMContactsManager.h; sourceTree = "<group>"; };
+		EE9697731DCA3B020001A07D /* YSMContactsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YSMContactsManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +203,10 @@
 			children = (
 				EE07C6211DC4FBDC00A93384 /* YSMXMPPManager.h */,
 				EE07C6221DC4FBDC00A93384 /* YSMXMPPManager.m */,
+				EE96976F1DCA3ADD0001A07D /* YSMRosterManager.h */,
+				EE9697701DCA3ADD0001A07D /* YSMRosterManager.m */,
+				EE9697721DCA3B020001A07D /* YSMContactsManager.h */,
+				EE9697731DCA3B020001A07D /* YSMContactsManager.m */,
 				EE07C6301DC6467100A93384 /* YSMXMPPProtocol.h */,
 			);
 			name = YSMXMPPManager;
@@ -391,6 +401,8 @@
 			files = (
 				EE077BA81DC7964D00D6F5D5 /* ChatroomTableViewController.m in Sources */,
 				EE07C61D1DC4C3CA00A93384 /* LoginViewController.m in Sources */,
+				EE9697741DCA3B020001A07D /* YSMContactsManager.m in Sources */,
+				EE9697711DCA3ADD0001A07D /* YSMRosterManager.m in Sources */,
 				EE07C5EF1DC4B1B500A93384 /* ViewController.m in Sources */,
 				EE07C62E1DC6318400A93384 /* RosterTableViewController.m in Sources */,
 				EE07C6231DC4FBDC00A93384 /* YSMXMPPManager.m in Sources */,

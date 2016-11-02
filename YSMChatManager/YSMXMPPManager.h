@@ -26,6 +26,8 @@
  */
 @property (nonatomic, strong) XMPPStream *xmppStream;
 
+@property (nonatomic, readonly) XMPPJID *myJid;
+
 #pragma mark - 登录注册
 /**
  用户登录
@@ -73,28 +75,6 @@
  @param account <#account description#>
  */
 - (void)unSubscribePresenceAccount:(NSString *)account;
-
-#pragma mark - 消息
-
-@property (nonatomic, assign) id<YSMXMPPMessageDelegate> messageDelegate;
-/**
- 消息上下文
- */
-@property (nonatomic, strong) NSManagedObjectContext *messageContext;
-/**
- 归档message
- */
-@property (nonatomic, strong) XMPPMessageArchiving *messageArchving;
-/**
- 消息列表
- */
-@property (nonatomic, readonly) NSMutableArray *messageArray;
-/**
- 激活message模块
- */
-- (void)activateMessage;
-
--(void)reloadMessageWithChaterJid:(XMPPJID *)chaterJid;
 
 #pragma mark - 电子名片
 @property (nonatomic, strong) XMPPvCardCoreDataStorage *vCardStorage;
