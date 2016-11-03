@@ -8,8 +8,10 @@
 
 #import "RosterTableViewController.h"
 #import "ChatroomTableViewController.h"
-
+#import "YSMRosterManager.h"
 @interface RosterTableViewController ()<YSMXMPPRosterDelegate>
+
+@property (nonatomic, strong) YSMRosterManager *rosterManager;
 
 @end
 
@@ -18,23 +20,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加" style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtomItemAction:)];
-    [YSMXMPPManager shareManager].rosterDelegate = self;
-    [[YSMXMPPManager shareManager] activateRoster];
     self.tableView.tableFooterView = [[UITableViewHeaderFooterView alloc] init];
+    
+    self.rosterManager = [[YSMRosterManager alloc] init];
+    self.rosterManager.delegate = self;
+    [self.rosterManager activateRoster];
 }
 
 - (void)rightBarButtomItemAction:(UIBarButtonItem *)sender{
-//    [[YSMXMPPManager shareManager] subscribePresenceAccount:@"user2"];
+    [self.rosterManager subscribePresenceAccount:@"user2"];
 }
 
 #pragma mark - Table view data source
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [YSMXMPPManager shareManager].rosterJids.count;
+    return self.rosterManager.rosterJids.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"rostercellId" forIndexPath:indexPath];
-    XMPPJID * jid = [[YSMXMPPManager shareManager].rosterJids objectAtIndex:indexPath.row];
+    XMPPJID * jid = [self.rosterManager.rosterJids objectAtIndex:indexPath.row];
     cell.textLabel.text = jid.user;
     return cell;
 }
@@ -80,7 +84,7 @@
 #pragma mark - Navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     NSInteger index = [self.tableView indexPathForCell:sender].row;
-    XMPPJID * JID = [[YSMXMPPManager shareManager].rosterJids objectAtIndex:index];
+    XMPPJID * JID = [self.rosterManager.rosterJids objectAtIndex:index];
     ChatroomTableViewController * chatVC = segue.destinationViewController;
     chatVC.chaterJid = JID;
 }

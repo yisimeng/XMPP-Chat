@@ -10,17 +10,18 @@
 #import "YSMContactsManager.h"
 @interface ChatroomTableViewController ()<YSMXMPPContactsDelegate>
 
-@property (nonatomic, strong) NSMutableArray *messages;
-
 @property (nonatomic, strong) YSMContactsManager *contactsManager;
 
 @end
 
 @implementation ChatroomTableViewController
 
+- (void)dealloc{
+    self.contactsManager = nil;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.messages = [NSMutableArray arrayWithCapacity:1];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtomItemAction:)];
     self.tableView.tableFooterView = [[UITableViewHeaderFooterView alloc] init];
     

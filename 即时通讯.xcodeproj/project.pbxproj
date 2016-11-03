@@ -557,7 +557,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 7WBB4H4S24;
-				GCC_PREFIX_HEADER = "/Users/yisimeng/Desktop/Repository/XMPP-Chat/即时通讯/PrefixHeader.pch";
+				GCC_PREFIX_HEADER = "即时通讯/PrefixHeader.pch";
 				INFOPLIST_FILE = "即时通讯/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = simeng.chat;
@@ -571,7 +571,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 7WBB4H4S24;
-				GCC_PREFIX_HEADER = "/Users/yisimeng/Desktop/Repository/XMPP-Chat/即时通讯/PrefixHeader.pch";
+				GCC_PREFIX_HEADER = "即时通讯/PrefixHeader.pch";
 				INFOPLIST_FILE = "即时通讯/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = simeng.chat;

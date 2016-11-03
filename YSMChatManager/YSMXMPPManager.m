@@ -17,9 +17,7 @@ typedef NS_ENUM(NSInteger,ConnectToServerType){
 @property (nonatomic, strong) NSString *account;
 @property (nonatomic, strong) NSString *password;
 @property (nonatomic, assign) ConnectToServerType connectToServerType;
-
 @property (nonatomic, strong) XMPPJID *myJid;
-
 /**
  好友列表
  */
@@ -165,89 +163,6 @@ typedef NS_ENUM(NSInteger,ConnectToServerType){
     }
 }
 
-#pragma mark - 好友
-
-- (void)activateRoster{
-    //激活好友
-    [self.xmppRoster activate:self.xmppStream];
-}
-- (XMPPRoster *)xmppRoster{
-    if (_xmppRoster == nil) {
-        //好友管理
-        self.rosterJids = [NSMutableArray arrayWithCapacity:1];
-        //获得一个存储好友的CoreData仓库，用来数据持久化
-        XMPPRosterCoreDataStorage * rosterCoreDataStorage = [XMPPRosterCoreDataStorage sharedInstance];
-        //初始化xmppRoster
-        _xmppRoster = [[XMPPRoster alloc] initWithRosterStorage:rosterCoreDataStorage dispatchQueue:dispatch_get_main_queue()];
-        _xmppRoster.autoFetchRoster = YES;
-        //设置代理
-        [_xmppRoster addDelegate:self delegateQueue:dispatch_get_main_queue()];
-    }
-    return _xmppRoster;
-}
-
-#pragma mark 好友管理
-//留有疑问：subscribePresenceToUser  和add  的区别。一个是好友，一个是联系人？
-- (void)subscribePresenceAccount:(NSString *)account{
-    XMPPJID * jid = [XMPPJID jidWithUser:account domain:kDomin resource:kResource];
-    [self.xmppRoster subscribePresenceToUser:jid];
-}
-- (void)unSubscribePresenceAccount:(NSString *)account{
-    //需要先判断是否已经是好友
-    XMPPJID * jid = [XMPPJID jidWithString:account];
-    [self.xmppRoster removeUser:jid];
-}
-//好友关系的推送
-- (void)xmppRoster:(XMPPRoster *)sender didReceiveRosterPush:(XMPPIQ *)iq{
-    NSLog(@"roster 接受到push：%@",iq);
-}
-
-#pragma mark XMPPRosterDelegate 好友请求回调
-- (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence{
-    if (self.rosterDelegate && [self.rosterDelegate respondsToSelector:@selector(shouldAcceptPresenceSubscription:)]) {
-        if ([self.rosterDelegate shouldAcceptPresenceSubscription:presence]) {
-            //同意好友申请，并添加对方为好友
-            [self.xmppRoster acceptPresenceSubscriptionRequestFrom:presence.from andAddToRoster:YES];
-        }else{
-            //拒绝好友申请
-            [self.xmppRoster rejectPresenceSubscriptionRequestFrom:presence.from];
-        }
-    }
-}
-//开始检索好友
-- (void)xmppRosterDidBeginPopulating:(XMPPRoster *)sender withVersion:(NSString *)version{
-    NSLog(@"开始获取好友列表");
-}
-//检索好友结束
-- (void)xmppRosterDidEndPopulating:(XMPPRoster *)sender{
-    NSLog(@"获取好友列表结束");
-    if (self.rosterDelegate && [self.rosterDelegate respondsToSelector:@selector(rosterDidEndPopulating)]) {
-        [self.rosterDelegate rosterDidEndPopulating];
-    }
-}
-//检索出好友，一次检索一个
-- (void)xmppRoster:(XMPPRoster *)sender didReceiveRosterItem:(NSXMLElement *)item{
-    //先取出jid字符串
-    NSString * jidStr = [[item attributeForName:@"jid"] stringValue];
-    //通过jid字符串获取jid对象
-    XMPPJID * jid = [XMPPJID jidWithString:jidStr];
-    //去重
-    if ([self.rosterJids containsObject:jid]) {
-        return;
-    }
-    //用户是否存在
-    if (jid.user) {
-        [self.rosterJids addObject:jid];
-    }
-}
-
-
-
-#pragma mark
-- (void)activateMessage{
-    //激活消息模块
-//    [self.messageArchving activate:self.xmppStream];
-}
 
 
 @end
