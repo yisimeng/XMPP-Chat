@@ -38,13 +38,27 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"rostercellId" forIndexPath:indexPath];
-    XMPPJID * jid = [self.rosterManager.rosterJids objectAtIndex:indexPath.row];
-    cell.textLabel.text = jid.user;
+    XMPPUserCoreDataStorageObject * user = [self.rosterManager.rosterJids objectAtIndex:indexPath.row];
+    cell.textLabel.text = user.displayName;
+    //XMPPJID * jid = [self.rosterManager.rosterJids objectAtIndex:indexPath.row];
+    //cell.textLabel.text = jid.user;
     return cell;
 }
 
 - (void)rosterDidEndPopulating{
     [self.tableView reloadData];
+}
+- (void)receivePresenceSubscription:(XMPPPresence *)presence handleComplete:(void (^)(BOOL))complete{
+    UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"好友申请" message:[NSString stringWithFormat:@"%@请求添加您为好友",presence.fromStr] preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction * acceptAction = [UIAlertAction actionWithTitle:@"同意" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        complete(YES);
+    }];
+    UIAlertAction * rejectAction = [UIAlertAction actionWithTitle:@"拒绝" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        complete(NO);
+    }];
+    [alert addAction:acceptAction];
+    [alert addAction:rejectAction];
+    [self.navigationController presentViewController:alert animated:YES completion:nil];
 }
 /*
  // Override to support conditional editing of the table view.
@@ -84,9 +98,9 @@
 #pragma mark - Navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     NSInteger index = [self.tableView indexPathForCell:sender].row;
-    XMPPJID * JID = [self.rosterManager.rosterJids objectAtIndex:index];
+    XMPPUserCoreDataStorageObject * chater = [self.rosterManager.rosterJids objectAtIndex:index];
     ChatroomTableViewController * chatVC = segue.destinationViewController;
-    chatVC.chaterJid = JID;
+    chatVC.chater = chater;
 }
 
 @end

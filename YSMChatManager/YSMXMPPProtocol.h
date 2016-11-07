@@ -32,7 +32,7 @@
  
  @return 是否同意
  */
-- (BOOL)shouldAcceptPresenceSubscription:(XMPPPresence *)presence;
+- (void)receivePresenceSubscription:(XMPPPresence *)presence handleComplete:(void(^)(BOOL accept))complete;
 @end
 
 

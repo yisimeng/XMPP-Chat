@@ -24,14 +24,13 @@
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发送" style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtomItemAction:)];
     self.tableView.tableFooterView = [[UITableViewHeaderFooterView alloc] init];
-    
-    self.contactsManager = [YSMContactsManager contactsManagerWithContactsJid:self.chaterJid];
+    self.contactsManager = [YSMContactsManager contactsManagerWithContactsJid:self.chater.jid];
     self.contactsManager.contactsDelegate = self;
     [self.contactsManager activateMessage];
 }
 
 - (void)rightBarButtomItemAction:(UIBarButtonItem *)sender{
-    XMPPMessage * message = [XMPPMessage messageWithType:@"chat" to:self.chaterJid];
+    XMPPMessage * message = [XMPPMessage messageWithType:@"chat" to:self.chater.jid];
     [message addBody:[NSString stringWithFormat:@"我是%@",[YSMXMPPManager shareManager].xmppStream.myJID.user]];
     [[YSMXMPPManager shareManager].xmppStream sendElement:message];
 }

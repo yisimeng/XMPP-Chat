@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface ChatroomTableViewController : UITableViewController
-@property (nonatomic, strong) XMPPJID *chaterJid;
+@property (nonatomic, strong) XMPPUserCoreDataStorageObject *chater;
 @end
